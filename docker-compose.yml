@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  n8n:
+    image: n8nio/n8n:${N8N_VERSION:-latest}
+    container_name: ${N8N_CONTAINER_NAME:-n8n_app}
+    restart: always
+          -      - "${N8N_PORT:-5678}:${N8N_PORT:-5678}"  # Render will map externally
+    environment:
+      # Cloud Postgres connection string
+      DB_POSTGRESDB_CONNECTION_STRING: ${POSTGRES_CONNECTION_URL:-}
+
+      # Security
+      N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE: ${N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE:-false}
+      N8N_EDITOR_BASE_URL: ${N8N_EDITOR_BASE_URL:-http://localhost:5678}
+      WEBHOOK_URL: ${WEBHOOK_URL:-http://localhost:5678}
+      N8N_DEFAULT_BINARY_DATA_MODE: ${N8N_DEFAULT_BINARY_DATA_MODE:-filesystem}
+      N8N_BASIC_AUTH_ACTIVE: ${N8N_BASIC_AUTH_ACTIVE:-true}
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-admin}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-admin123}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-default_encryption_key}
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: ${N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS:-true}
+
+      # Server
+      N8N_HOST: ${N8N_HOST:-0.0.0.0}       # Important for cloud deployment
+      N8N_PORT: ${N8N_PORT:-5678}
+      N8N_PROTOCOL: ${N8N_PROTOCOL:-http} # Render provides HTTPS automatically
+      NODE_ENV: ${NODE_ENV:-production}
+      GENERIC_TIMEZONE: ${GENERIC_TIMEZONE:-Asia/Kolkata}
+
+    volumes:
+      - ${N8N_DATA_PATH:-./data/n8n}:/home/node/.n8n  # Render persistent storage
